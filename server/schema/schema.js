@@ -2,12 +2,15 @@ const graphql = require('graphql');
 const _ = require('lodash');
 
 const {GraphQLObjectType, GraphQLString, GraphQLSchema,
-GraphQLID, GraphQLInt} = graphql;
+GraphQLID, GraphQLInt, GraphQLList} = graphql;
 
 var books = [
     {name: "abc", genre: "Fantasy", id: '1', authorId: '2'},
     {name: "def", genre: "History", id: '2', authorId: '3'},
-    {name: "ghi", genre: "Fire", id: '3', authorId: '1'}
+    {name: "ghi", genre: "Fire", id: '3', authorId: '1'},
+    {name: "jkl", genre: "thraler", id: '4', authorId: '3'},
+    {name: "mno", genre: "chomics", id: '5', authorId: '2'},
+    {name: "pqr", genre: "Jock", id: '6', authorId: '1'}
 ];
 
 var authors = [
@@ -36,7 +39,13 @@ const AuthorType = new GraphQLObjectType({
     fields: () => ({
         id: {type: GraphQLID},
         name: {type: GraphQLString},
-        age: {type: GraphQLInt}
+        age: {type: GraphQLInt},
+        books: {
+            type: new GraphQLList(BookType),
+            resolve(parent, args) {
+                return _.filter(books, {authorId: parent.id});
+            }
+        }
     })
 })
 

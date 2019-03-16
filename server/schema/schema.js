@@ -5,9 +5,9 @@ const {GraphQLObjectType, GraphQLString, GraphQLSchema,
 GraphQLID, GraphQLInt} = graphql;
 
 var books = [
-    {name: "abc", genre: "Fantasy", id: '1'},
-    {name: "def", genre: "History", id: '2'},
-    {name: "ghi", genre: "Fire", id: '3'}
+    {name: "abc", genre: "Fantasy", id: '1', authorId: '2'},
+    {name: "def", genre: "History", id: '2', authorId: '3'},
+    {name: "ghi", genre: "Fire", id: '3', authorId: '1'}
 ];
 
 var authors = [
@@ -21,7 +21,13 @@ const BookType = new GraphQLObjectType({
     fields: () => ({
         id: {type: GraphQLID},
         name: {type: GraphQLString},
-        genre: {type: GraphQLString}
+        genre: {type: GraphQLString},
+        author: {
+            type: AuthorType,
+            resolve(parent, args) {
+                return _.find(authors, {id: parent.authorId});
+            }
+        }
     })
 });
 
@@ -40,7 +46,7 @@ const RootQuery = new GraphQLObjectType({
         book: {
             type: BookType,
             args: {id: {type: GraphQLID}},
-            resolve(parent, args) {
+            resolve(parent, args) {   //resolve function responcible of going up and grabing data
                 // code to get data from db / other source
 
                return _.find(books, {id: args.id});
